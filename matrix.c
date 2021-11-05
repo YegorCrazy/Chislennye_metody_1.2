@@ -304,5 +304,6 @@ long double diff (matrix *f, matrix *x) { // среднеквадратична�
     for (long long i = 0; i < f->m; ++i) {
         err += pow(((f->elem)[0][i] - (x->elem)[0][i]), 2);
     }
+    err /= f->m;
     return sqrt(err);
 }

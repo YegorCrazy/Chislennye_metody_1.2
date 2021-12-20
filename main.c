@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 int main (int argc, char **argv) {
-    //long long n;
-    //scanf("%lld", &n);
-    unsigned n = 20;
+    long long n;
+    scanf("%lld", &n);
+    //unsigned n = 20;
     
     long double omega = 0.1;
     long double eps = 0.000001;
@@ -13,11 +13,14 @@ int main (int argc, char **argv) {
     matrix *A = new_matrix(n, n);
     matrix *f = new_matrix(n, 1);
     
-    /*FILE *input = fopen("input.txt", "r");
+    FILE *input = fopen("input.txt", "r");
     read_matrix(input, A);
     read_matrix(input, f);
-    fclose(input);*/
-    fill_matrix1(A, f, n);
+    fclose(input);
+    //fill_matrix5(A, f, n);
+    
+    printf("Starting f coefficents are:\n\n");
+    print_matrix(f);
     
     printf("Determinant is %Lf (if it is 0 or nan, result can't be calculated well)\n\n", determinant(A));
     

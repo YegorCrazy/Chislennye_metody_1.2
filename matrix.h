@@ -21,7 +21,7 @@ void fill_matrix3 (matrix *A, matrix *f, long long n);
 void fill_matrix4 (matrix *A, matrix *f, long long n);
 void fill_matrix5 (matrix *A, matrix *f, long long n);
 
-void triangulate_matrix (matrix *matr, matrix *f);
+void triangulate_matrix (matrix *matr, matrix *f, int *reverse);
 long double determinant (matrix *matr);
 
 matrix *reverse_matrix (matrix *A);

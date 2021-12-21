@@ -190,14 +190,35 @@ void fill_matrix5 (matrix *A, matrix *f, long long n) {
     }
 }
 
-void triangulate_matrix (matrix *matr, matrix *f) { //треугольный вид без выделения ведущего элемента
-    long long m = matr->m;
-    long long n = matr->n;
+void triangulate_matrix (matrix *matr, matrix *f, int *reverse) { //треугольный вид без выделения ведущего элемента
+    unsigned m = matr->m;
+    unsigned n = matr->n;
     long double **elem = matr->elem;
-    for (long long i = 0; i < m; ++i) {
-        for (long long j = i + 1; j < m; ++j) {
+    for (unsigned i = 0; i < m; ++i) {
+        if (elem[i][i] == 0) {
+            if (reverse != NULL) *reverse += 1;
+            for (int j = i + 1; j < m; ++j) {
+                if (elem[i][j] != 0) {
+                    long double tmp;
+                    for (int k = 0; k < n; ++k) {
+                        tmp = elem[k][i];
+                        elem[k][i] = elem[k][j];
+                        elem[k][j] = tmp;
+                    }
+                    if (f != NULL) {
+                        tmp = f->elem[0][i];
+                        f->elem[0][i] = f->elem[0][j];
+                        f->elem[0][j] = tmp;
+                    }
+                    break;
+                }
+                printf("Matrix determinant equals zero\n\n");
+                exit(0);
+            }
+        }
+        for (unsigned j = i + 1; j < m; ++j) {
             long double koef = elem[i][j] / elem[i][i];
-            for (long long k = i; k < n; ++k) {
+            for (unsigned k = i; k < n; ++k) {
                 elem[k][j] -= elem[k][i] * koef;
             }
             if (f != NULL) {
@@ -208,18 +229,21 @@ void triangulate_matrix (matrix *matr, matrix *f) { //треугольный в�
 }
 
 long double determinant (matrix *matr) { //поиск определителя
-    long long n = matr->n;
+    unsigned n = matr->n;
     matrix *new = copy_matrix(matr);
-    triangulate_matrix(new, NULL);
+    int count = 0;
+    triangulate_matrix(new, NULL, &count);
     long double res = 1.0;
-    for (long long i = 0; i < n; ++i) {
+    if (count % 2 == 1) res = -1.0;
+    for (unsigned i = 0; i < n; ++i) {
         res *= (new->elem)[i][i];
     }
     delete_matrix(new);
     return res;
 }
 
-matrix *reverse_matrix (matrix *A) { //поиск обратной матрицы методом Гаусса
+matrix *reverse_matrix (matrix *A2) { //поиск обратной матрицы методом Гаусса
+    matrix *A = copy_matrix(A2);
     long long m = A->m;
     long long n = A->n;
     if (m != n) return NULL;
@@ -233,6 +257,25 @@ matrix *reverse_matrix (matrix *A) { //поиск обратной матриц�
     long double **elem = A->elem;
     long double **elem1 = A1->elem;
     for (long long i = 0; i < m; ++i) {
+        if (elem[i][i] == 0) {
+            for (int j = i + 1; j < m; ++j) {
+                if (elem[i][j] != 0) {
+                    long double tmp;
+                    for (int k = 0; k < n; ++k) {
+                        tmp = elem[k][i];
+                        elem[k][i] = elem[k][j];
+                        elem[k][j] = tmp;
+                    }
+                    for (int k = 0; k < n; ++k) {
+                        tmp = elem1[k][i];
+                        elem1[k][i] = elem1[k][j];
+                        elem1[k][j] = tmp;
+                    }
+                    break;
+                }
+                exit(0);
+            }
+        }
         for (long long j = 0; j < n; ++j) {
             elem1[j][i] /= elem[i][i];
         }
@@ -257,6 +300,7 @@ matrix *reverse_matrix (matrix *A) { //поиск обратной матриц�
             }
         }
     }
+    delete_matrix(A);
     return A1;
 }
 

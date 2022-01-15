@@ -5,7 +5,7 @@
 int main (int argc, char **argv) {
     long long n;
     scanf("%lld", &n);
-    //unsigned n = 20;
+    //unsigned n = 25;
     
     long double omega = 0.1;
     long double eps = 0.000001;
